@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import AddMovieForm from "./components/AddMovieForm"
 import { Route, Switch, Redirect } from "react-router-dom";
 import MovieList from './components/MovieList';
 import Movie from './components/Movie';
@@ -9,6 +9,7 @@ import MovieHeader from './components/MovieHeader';
 import FavoriteMovieList from './components/FavoriteMovieList';
 
 import axios from 'axios';
+import EditMovieForm from "./components/EditMovieForm";
 
 const App = (props) => {
   const [movies, setMovies] = useState([]);
@@ -22,13 +23,14 @@ const App = (props) => {
       .catch(err => {
         console.log(err);
       });
-  }, []);
+  }, [movies]);
 
   const deleteMovie = (id)=> {
+    setMovies(movies.filter(item => (item.id !== Number(id))))
   }
 
   const addToFavorites = (movie) => {
-    
+    setFavoriteMovies([...favoriteMovies, movie])
   }
 
   return (
@@ -43,11 +45,15 @@ const App = (props) => {
           <FavoriteMovieList favoriteMovies={favoriteMovies}/>
         
           <Switch>
+            <Route path="/movies/add">
+              <AddMovieForm />
+            </Route>
             <Route path="/movies/edit/:id">
+              <EditMovieForm setMovies={setMovies}/>
             </Route>
 
             <Route path="/movies/:id">
-              <Movie/>
+              <Movie deleteMovie={deleteMovie} addToFavorites={addToFavorites}/>
             </Route>
 
             <Route path="/movies">
